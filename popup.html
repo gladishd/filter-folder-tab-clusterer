@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Clusterer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+      color: #333;
+      background-color: #f4f4f4;
+    }
+
+    #clusters {
+      margin-top: 10px;
+    }
+
+    .cluster {
+      padding: 5px;
+      margin-bottom: 5px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+    }
+
+    .cluster:hover {
+      background-color: #e9e9e9;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Tab Clusters</h1>
+  <div id="clusters">
+    <!-- Clusters will be appended here by popup.js -->
+  </div>
+  <button id="saveButton">Save Clusters as Bookmarks</button>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
