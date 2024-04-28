@@ -1,3 +1,13 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  /* Enable scrolling if needed */
+  width: 800px;
+  /* Set this to the largest width you want to attempt */
+}
+
 /* General body styling */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -5,12 +15,19 @@ body {
   padding: 10px;
   background-color: #f7f7f7;
   color: #333;
+  display: flex;
+  flex-direction: column;
+  /* Make body flex container */
+  justify-content: left;
+  /* Center the content */
 }
 
 /* Header styling */
 h1 {
   font-size: 18px;
   color: #333;
+  width: 100%;
+  /* Full width to align center */
 }
 
 /* Cluster display styling */
@@ -18,20 +35,58 @@ h1 {
   margin-top: 10px;
   border-top: 1px solid #ccc;
   padding-top: 10px;
+  overflow-y: auto;
+  /* Allow the div to scroll */
+  width: 90%;
+  /* Use a percentage for responsive width */
+  max-width: 600px;
+  /* Maximum width for readability */
 }
 
-.cluster {
-  padding: 8px;
+.cluster-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.cluster-name {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-item {
+  padding: 5px;
+  border: 1px solid #ddd;
+  margin-top: 5px;
   background-color: #fff;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
+  word-break: break-all;
+  /* Ensure long URLs do not overflow */
 }
 
-.cluster:hover {
-  background-color: #eaeaea;
+/* Adjust button styling if necessary */
+/* ... existing button styles ... */
+
+@media (max-width: 400px) {
+
+  /* For very small widths, adjust padding or other properties */
+  #clusters {
+    width: 100%;
+    padding-top: 5px;
+  }
+
+  body {
+    padding: 5px;
+  }
 }
+
 
 /* Button styling */
 button {
@@ -39,16 +94,40 @@ button {
   /* Green */
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: 10px 15px;
+  /* Adjust padding as necessary */
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 10px 2px;
+  display: block;
+  /* Make button a block element */
+  margin-bottom: 10px;
+  /* Margin at the bottom */
   cursor: pointer;
   border-radius: 4px;
+  font-size: 1em;
+  /* Set font size */
+}
+
+/* This will make your button only as wide as its content, up to 100px */
+#saveButton {
+  width: auto;
+  max-width: 100px;
 }
 
 button:hover {
   background-color: #45a049;
+}
+
+
+@media (max-width: 400px) {
+
+  /* For very small widths, adjust padding or other properties */
+  #clusters {
+    width: 100%;
+    padding-top: 5px;
+  }
+
+  body {
+    padding: 5px;
+  }
 }
