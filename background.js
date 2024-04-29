@@ -33,6 +33,17 @@ function someClusteringFunction(tabs) {
 let currentClusters = [];
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'switchToTab') {
+    chrome.tabs.query({}, function (tabs) {
+      const tab = tabs.find(t => t.url === message.url);
+      if (tab) {
+        chrome.tabs.update(tab.id, { active: true });
+      } else {
+        // Optional: Open a new tab if not found
+        chrome.tabs.create({ url: message.url });
+      }
+    });
+  }
   if (message.action === 'fetchClusters') {
     chrome.tabs.query({}, function (tabs) {
       const data = tabs.map(tab => ({ url: tab.url, title: tab.title }));

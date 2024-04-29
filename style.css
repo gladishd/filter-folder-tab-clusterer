@@ -1,3 +1,82 @@
+.tab-item {
+  display: block;
+  padding: 5px;
+  margin-top: 5px;
+  background-color: #fff;
+  text-decoration: none;
+  /* Removes the underline from links */
+  color: #000;
+  /* Sets text color */
+  border: 1px solid #ddd;
+  word-break: break-all;
+}
+
+.tab-item a {
+  display: block;
+  color: #0000EE;
+  /* Standard link color */
+  text-decoration: underline;
+  /* Standard link decoration */
+  margin-top: 2px;
+  /* Some space between the title and the URL */
+}
+
+
+/* ... existing styles ... */
+/* ... existing styles ... */
+
+#scrollUp {
+  position: fixed;
+  top: 10px;
+  /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf4f7d;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  font-weight: bolder;
+  /* Adjust padding to make it look like an arrow */
+  cursor: pointer;
+  z-index: 1000;
+  max-width: 50px;
+  /* Ensure it's above other content */
+}
+
+#scrollDown {
+  position: fixed;
+  bottom: 10px;
+  /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf4f7e;
+  color: black;
+  font-weight: bolder;
+  border: none;
+  padding: 10px 20px;
+  /* Adjust padding to make it look like an arrow */
+  cursor: pointer;
+  z-index: 1000;
+  max-width: 50px;
+  /* Ensure it's above other content */
+}
+
+/* ... more styles ... */
+
+
+#scrollUp {
+  right: 20px;
+  /* Position from the right for up button */
+}
+
+#scrollDown {
+  right: 50px;
+  /* Position from the right for down button */
+}
+
+/* ... more styles ... */
+
+
 body,
 html {
   margin: 0;
@@ -30,7 +109,8 @@ body {
 }
 
 /* Header styling */
-h1 {
+h1,
+h2 {
   font-size: 18px;
   color: #333;
   width: 100%;
@@ -95,10 +175,10 @@ h1 {
 
 /* Button styling */
 button {
-  background-color: #4CAF50;
+  background-color: #4caf4f81;
   /* Green */
   border: none;
-  color: white;
+  color: rgb(0, 0, 0);
   padding: 10px 15px;
   /* Adjust padding as necessary */
   text-align: center;
@@ -107,6 +187,7 @@ button {
   /* Make button a block element */
   margin-bottom: 10px;
   /* Margin at the bottom */
+  font-weight: bolder;
   cursor: pointer;
   border-radius: 4px;
   font-size: 1em;
@@ -116,11 +197,11 @@ button {
 /* This will make your button only as wide as its content, up to 100px */
 #saveButton {
   width: auto;
-  max-width: 100px;
+  max-width: 200px;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #45a0497a;
 }
 
 

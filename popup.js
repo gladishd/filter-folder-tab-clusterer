@@ -5,11 +5,83 @@ document.addEventListener('DOMContentLoaded', function () {
   const timestampCheckbox = document.getElementById('timestampCheckbox');
   let isSaving = false; // Flag to prevent multiple save actions
 
-  toggleViewButton.addEventListener('click', function () {
-    const currentView = toggleViewButton.textContent.includes('List') ? 'graph' : 'list';
-    fetchAndDisplayClusters(currentView);
-    toggleViewButton.textContent = `Toggle View (${currentView.charAt(0).toUpperCase() + currentView.slice(1)})`;
+  // ... other initializations ...
+
+  const scrollUpButton = document.getElementById('scrollUp');
+  const scrollDownButton = document.getElementById('scrollDown');
+  let currentClusterIndex = 0;
+
+  function scrollToCluster(index) {
+    const clusters = document.querySelectorAll('.cluster-container');
+    if (index >= 0 && index < clusters.length) {
+      currentClusterIndex = index;
+      clusters[index].scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  scrollUpButton.addEventListener('click', function () {
+    scrollToCluster(currentClusterIndex - 1);
   });
+
+  scrollDownButton.addEventListener('click', function () {
+    scrollToCluster(currentClusterIndex + 1);
+  });
+
+
+  let scrollTimeout;
+
+  scrollUpButton.addEventListener('click', function () {
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = null;
+      // Scroll to the top cluster on double-click
+      scrollToCluster(0);
+    } else {
+      scrollTimeout = setTimeout(() => {
+        // scrollToCluster(currentClusterIndex - 1);
+        scrollTimeout = null;
+      }, 300); // Wait for a potential second click for 300ms
+    }
+  });
+
+  scrollDownButton.addEventListener('click', function () {
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = null;
+      // Scroll to the last cluster on double-click
+      scrollToCluster(document.querySelectorAll('.cluster-container').length - 1);
+    } else {
+      scrollTimeout = setTimeout(() => {
+        // scrollToCluster(currentClusterIndex + 1);
+        scrollTimeout = null;
+      }, 300); // Wait for a potential second click for 300ms
+    }
+  });
+
+  // ... (the rest of your code)
+
+  // The rest of your popup.js code
+  // ...
+
+  // Now instead of fetching and displaying clusters,
+  // you should call a new function to fetch clusters and setup the initial view:
+  setupClustersView();
+
+  function setupClustersView() {
+    chrome.runtime.sendMessage({ action: 'fetchClusters' }, function (response) {
+      if (response && response.clusters) {
+        drawGraph(response.clusters); // This will draw the clusters graphically
+        scrollToCluster(0); // This will scroll to the first cluster
+      } else {
+        clustersDiv.textContent = 'No clusters available.';
+      }
+    });
+  }
+
+  // drawGraph function and other functions remain unchanged
+  // ...
+
+  // Removed the listener for the toggle view button since we're loading the list view by default
 
   saveButton.addEventListener('click', function () {
     if (isSaving) {
@@ -53,22 +125,45 @@ document.addEventListener('DOMContentLoaded', function () {
     clusters.forEach(cluster => {
       const clusterContainer = document.createElement('div');
       clusterContainer.className = 'cluster-container';
+
       const clusterName = document.createElement('div');
       clusterName.className = 'cluster-name';
       clusterName.textContent = cluster.name;
       clusterContainer.appendChild(clusterName);
+
       const tabsContainer = document.createElement('div');
       tabsContainer.className = 'tabs-container';
       clusterContainer.appendChild(tabsContainer);
+
       cluster.tabs.forEach(tab => {
         const tabElement = document.createElement('div');
         tabElement.className = 'tab-item';
-        tabElement.textContent = `${tab.title} - ${tab.url}`;
+
+        const titleElement = document.createElement('span');
+        titleElement.textContent = tab.title;
+        tabElement.appendChild(titleElement);
+
+        const urlElement = document.createElement('a');
+        urlElement.textContent = tab.url;
+        urlElement.style.display = 'block'; // URL on a new line
+        urlElement.style.cursor = 'pointer'; // Make it look clickable
+        urlElement.addEventListener('dblclick', function () {
+          chrome.runtime.sendMessage({ action: 'switchToTab', url: tab.url });
+        });
+        tabElement.appendChild(urlElement);
+
         tabsContainer.appendChild(tabElement);
       });
+
       clustersDiv.appendChild(clusterContainer);
     });
   }
+
+
+
+
+  fetchAndDisplayClusters('graph');
+
 
   fetchAndDisplayBookmarkFolders(); // Call this to populate folders on load
 
