@@ -1,39 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
   const clustersDiv = document.getElementById('clusters');
-  const listViewButton = document.getElementById('listViewButton');
-  const graphViewButton = document.getElementById('graphViewButton');
+  const toggleViewButton = document.getElementById('toggleViewButton');
   const saveButton = document.getElementById('saveButton');
   const timestampCheckbox = document.getElementById('timestampCheckbox');
+  let isSaving = false; // Flag to prevent multiple save actions
 
-  listViewButton.addEventListener('click', function () {
-    fetchAndDisplayClusters('list');
+  toggleViewButton.addEventListener('click', function () {
+    const currentView = toggleViewButton.textContent.includes('List') ? 'graph' : 'list';
+    fetchAndDisplayClusters(currentView);
+    toggleViewButton.textContent = `Toggle View (${currentView.charAt(0).toUpperCase() + currentView.slice(1)})`;
   });
 
-  graphViewButton.addEventListener('click', function () {
-    fetchAndDisplayClusters('graph');
-  });
-
-  if (!window.hasAddedSaveListener) {
-    console.log("Adding listener to save button");
-    let debounceTimer;
-    saveButton.addEventListener('click', function () {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        const addTimestamp = timestampCheckbox.checked;
-        chrome.runtime.sendMessage({ action: 'saveBookmarks', addTimestamp: addTimestamp }, function (response) {
-          console.log("Bookmark save response:", response.status);
-        });
-      }, 300);
+  saveButton.addEventListener('click', function () {
+    if (isSaving) {
+      console.log('Save operation already in progress. Please wait.');
+      return;
+    }
+    isSaving = true;
+    const addTimestamp = timestampCheckbox.checked;
+    chrome.runtime.sendMessage({ action: 'saveBookmarks', addTimestamp: addTimestamp }, function (response) {
+      console.log("Bookmark save response:", response.status);
+      isSaving = false;
     });
+  });
 
-    window.hasAddedSaveListener = true;
-  } else {
-    console.log("Save listener already added");
-  }
-
-
-
-  // Fetch and display clusters according to view type
   function fetchAndDisplayClusters(viewType) {
     chrome.runtime.sendMessage({ action: 'fetchClusters' }, function (response) {
       if (response && response.clusters) {
@@ -48,9 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Function to display clusters as list (reuse or modify your existing function)
   function displayList(clusters) {
-    clustersDiv.innerHTML = ''; // Clear existing content
+    clustersDiv.innerHTML = '';
     clusters.forEach(cluster => {
       const clusterElement = document.createElement('div');
       clusterElement.className = 'cluster';
@@ -58,53 +47,75 @@ document.addEventListener('DOMContentLoaded', function () {
       clustersDiv.appendChild(clusterElement);
     });
   }
+
+  function drawGraph(clusters) {
+    clustersDiv.innerHTML = '';
+    clusters.forEach(cluster => {
+      const clusterContainer = document.createElement('div');
+      clusterContainer.className = 'cluster-container';
+      const clusterName = document.createElement('div');
+      clusterName.className = 'cluster-name';
+      clusterName.textContent = cluster.name;
+      clusterContainer.appendChild(clusterName);
+      const tabsContainer = document.createElement('div');
+      tabsContainer.className = 'tabs-container';
+      clusterContainer.appendChild(tabsContainer);
+      cluster.tabs.forEach(tab => {
+        const tabElement = document.createElement('div');
+        tabElement.className = 'tab-item';
+        tabElement.textContent = `${tab.title} - ${tab.url}`;
+        tabsContainer.appendChild(tabElement);
+      });
+      clustersDiv.appendChild(clusterContainer);
+    });
+  }
+
+  fetchAndDisplayBookmarkFolders(); // Call this to populate folders on load
+
+  function fetchAndDisplayBookmarkFolders() {
+    chrome.bookmarks.getTree(function (bookmarkNodes) {
+      const foldersList = document.getElementById('foldersList');
+      foldersList.innerHTML = ''; // Clear existing list
+      processNode(bookmarkNodes); // Start processing from the root
+    });
+
+    function processNode(nodes) {
+      nodes.forEach(node => {
+        if (node.children && node.title.includes('All Clusters')) {
+          const listItem = document.createElement('li');
+          listItem.textContent = node.title;
+          const deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Delete';
+          deleteButton.onclick = function () {
+            chrome.bookmarks.removeTree(node.id, () => {
+              listItem.remove();
+              console.log(`Deleted folder: ${node.title}`);
+            });
+          };
+          listItem.appendChild(deleteButton);
+          foldersList.appendChild(listItem);
+        }
+        if (node.children) {
+          processNode(node.children);
+        }
+      });
+    }
+  }
+
+  chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message.action === 'bookmarkChanged') {
+      fetchAndDisplayBookmarkFolders();
+    }
+  });
 });
 
-
-function drawGraph(clusters) {
-  console.log('Drawing graph with clusters:', clusters);
-  const clustersDiv = document.getElementById('clusters');
-  clustersDiv.innerHTML = ''; // Clear existing content
-
-  clusters.forEach(cluster => {
-    // Create a container for each cluster
-    const clusterContainer = document.createElement('div');
-    clusterContainer.className = 'cluster-container';
-    clustersDiv.appendChild(clusterContainer);
-
-    // Create a header for the cluster name
-    const clusterName = document.createElement('div');
-    clusterName.className = 'cluster-name';
-    clusterName.textContent = cluster.name;
-    clusterContainer.appendChild(clusterName);
-
-    // Create a container for the tabs within the cluster
-    const tabsContainer = document.createElement('div');
-    tabsContainer.className = 'tabs-container';
-    clusterContainer.appendChild(tabsContainer);
-
-    // Add each tab as an item in the tabs container
-    cluster.tabs.forEach(tab => {
-      const tabElement = document.createElement('div');
-      tabElement.className = 'tab-item';
-      tabElement.textContent = `${tab.title} - ${tab.url}`;
-      tabsContainer.appendChild(tabElement);
-    });
-  });
-}
-
-
-
 document.getElementById('saveButton').addEventListener('click', function () {
-  console.log("Save button clicked");
   const addTimestamp = timestampCheckbox.checked;
   chrome.runtime.sendMessage({ action: 'saveBookmarks', addTimestamp: addTimestamp }, function (response) {
     console.log("Bookmark save response:", response.status);
   });
 });
 
-
-document.body.style.height = `${height}px`;
-// Or, if you have a specific container in your HTML structure:
-document.getElementById('clusters').style.height = `${height}px`;
-
+document.body.style.height = '580px'; // Set this to the fixed height you want
+// Remove the following line if you are not dynamically setting the height based on content
+// document.getElementById('clusters').style.height = `${height}px`;

@@ -11,10 +11,14 @@
 <body>
   <h1>Tab Clusters</h1>
   <div id="viewSwitch">
-    <button id="listViewButton">List View</button>
-    <button id="graphViewButton">Graph View</button>
+    <button id="toggleViewButton">Toggle View (List)</button>
   </div>
   <div id="clusters"></div>
+  <!-- New section for displaying bookmark folders -->
+  <div id="bookmarkFolders">
+    <h2>Bookmark Folders</h2>
+    <ul id="foldersList"></ul> <!-- This will be populated with the folder names and delete buttons -->
+  </div>
   <label>
     <input type="checkbox" id="timestampCheckbox"> Add Timestamp
   </label>

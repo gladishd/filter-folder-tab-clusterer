@@ -4,8 +4,15 @@ html {
   padding: 0;
   overflow-y: auto;
   /* Enable scrolling if needed */
-  width: 800px;
   /* Set this to the largest width you want to attempt */
+}
+
+body {
+  width: 99vw;
+}
+
+html {
+  width: 780px;
 }
 
 /* General body styling */
@@ -37,10 +44,8 @@ h1 {
   padding-top: 10px;
   overflow-y: auto;
   /* Allow the div to scroll */
-  width: 90%;
+  width: 100%;
   /* Use a percentage for responsive width */
-  max-width: 600px;
-  /* Maximum width for readability */
 }
 
 .cluster-container {
