@@ -68,15 +68,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-function saveClustersAsBookmarks(clusters) {
-  // Search for an existing 'All Clusters' folder
-  chrome.bookmarks.search({ title: 'All Clusters' }, function (results) {
+function saveClustersAsBookmarks(clusters, addTimestamp) {
+  let folderTitle = 'All Clusters';
+  if (addTimestamp) {
+    const date = new Date();
+    const timestamp = date.toISOString().replace(/:/g, '-').slice(0, 19);
+    folderTitle += ' ' + timestamp;
+  }
+
+  chrome.bookmarks.search({ title: folderTitle }, function (results) {
     if (results.length) {
-      // If it exists, use the first one found
+      console.log("Folder already exists, updating:", folderTitle);
       updateClustersFolder(results[0].id, clusters);
     } else {
-      // Otherwise, create a new folder
-      chrome.bookmarks.create({ title: 'All Clusters' }, function (newFolder) {
+      console.log("No existing folder found, creating new one:", folderTitle);
+      chrome.bookmarks.create({ title: folderTitle }, function (newFolder) {
         updateClustersFolder(newFolder.id, clusters);
       });
     }
@@ -104,15 +110,19 @@ function updateClustersFolder(folderId, clusters) {
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log("Received message:", message.action);
   if (message.action === 'fetchClusters') {
     chrome.tabs.query({}, function (tabs) {
+      console.log("Query tabs for clusters");
       const data = tabs.map(tab => ({ url: tab.url, title: tab.title }));
       currentClusters = someClusteringFunction(data);
+      console.log("Clusters formed and ready to send back");
       sendResponse({ clusters: currentClusters });
     });
     return true;  // Indicate asynchronous response
   } else if (message.action === 'saveBookmarks') {
-    saveClustersAsBookmarks(currentClusters);
-    sendResponse({ status: 'Bookmarks saved!' });
+    console.log("Handling saveBookmarks action");
+    saveClustersAsBookmarks(currentClusters, message.addTimestamp);
+    sendResponse({ status: 'Bookmarks saved with timestamp!' });
   }
 });

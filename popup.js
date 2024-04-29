@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const listViewButton = document.getElementById('listViewButton');
   const graphViewButton = document.getElementById('graphViewButton');
   const saveButton = document.getElementById('saveButton');
+  const timestampCheckbox = document.getElementById('timestampCheckbox');
 
   listViewButton.addEventListener('click', function () {
     fetchAndDisplayClusters('list');
@@ -12,11 +13,25 @@ document.addEventListener('DOMContentLoaded', function () {
     fetchAndDisplayClusters('graph');
   });
 
-  saveButton.addEventListener('click', function () {
-    chrome.runtime.sendMessage({ action: 'saveBookmarks' }, function (response) {
-      console.log(response.status);
+  if (!window.hasAddedSaveListener) {
+    console.log("Adding listener to save button");
+    let debounceTimer;
+    saveButton.addEventListener('click', function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const addTimestamp = timestampCheckbox.checked;
+        chrome.runtime.sendMessage({ action: 'saveBookmarks', addTimestamp: addTimestamp }, function (response) {
+          console.log("Bookmark save response:", response.status);
+        });
+      }, 300);
     });
-  });
+
+    window.hasAddedSaveListener = true;
+  } else {
+    console.log("Save listener already added");
+  }
+
+
 
   // Fetch and display clusters according to view type
   function fetchAndDisplayClusters(viewType) {
@@ -81,10 +96,13 @@ function drawGraph(clusters) {
 
 
 document.getElementById('saveButton').addEventListener('click', function () {
-  chrome.runtime.sendMessage({ action: 'saveBookmarks' }, function (response) {
-    console.log(response.status);
+  console.log("Save button clicked");
+  const addTimestamp = timestampCheckbox.checked;
+  chrome.runtime.sendMessage({ action: 'saveBookmarks', addTimestamp: addTimestamp }, function (response) {
+    console.log("Bookmark save response:", response.status);
   });
 });
+
 
 document.body.style.height = `${height}px`;
 // Or, if you have a specific container in your HTML structure:
