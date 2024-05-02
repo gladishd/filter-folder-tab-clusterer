@@ -5,8 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const timestampCheckbox = document.getElementById('timestampCheckbox');
   let isSaving = false; // Flag to prevent multiple save actions
 
-  // ... other initializations ...
-
   const scrollUpButton = document.getElementById('scrollUp');
   const scrollDownButton = document.getElementById('scrollDown');
   let currentClusterIndex = 0;
@@ -26,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
   scrollDownButton.addEventListener('click', function () {
     scrollToCluster(currentClusterIndex + 1);
   });
-
 
   let scrollTimeout;
 
@@ -58,11 +55,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // ... (the rest of your code)
-
-  // The rest of your popup.js code
-  // ...
-
   // Now instead of fetching and displaying clusters,
   // you should call a new function to fetch clusters and setup the initial view:
   setupClustersView();
@@ -77,11 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
-
-  // drawGraph function and other functions remain unchanged
-  // ...
-
-  // Removed the listener for the toggle view button since we're loading the list view by default
 
   saveButton.addEventListener('click', function () {
     if (isSaving) {
@@ -159,12 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-
-
-
   fetchAndDisplayClusters('graph');
-
-
   fetchAndDisplayBookmarkFolders(); // Call this to populate folders on load
 
   function fetchAndDisplayBookmarkFolders() {

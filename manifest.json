@@ -5,7 +5,6 @@
   "permissions": [
     "tabs",
     "bookmarks",
-    "storage",
     "background"
   ],
   "background": {

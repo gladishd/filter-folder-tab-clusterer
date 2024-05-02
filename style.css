@@ -21,10 +21,6 @@
   /* Some space between the title and the URL */
 }
 
-
-/* ... existing styles ... */
-/* ... existing styles ... */
-
 #scrollUp {
   position: fixed;
   top: 10px;
@@ -61,9 +57,6 @@
   /* Ensure it's above other content */
 }
 
-/* ... more styles ... */
-
-
 #scrollUp {
   right: 20px;
   /* Position from the right for up button */
@@ -73,9 +66,6 @@
   right: 50px;
   /* Position from the right for down button */
 }
-
-/* ... more styles ... */
-
 
 body,
 html {
@@ -157,7 +147,6 @@ h2 {
 }
 
 /* Adjust button styling if necessary */
-/* ... existing button styles ... */
 
 @media (max-width: 400px) {
 
@@ -171,7 +160,6 @@ h2 {
     padding: 5px;
   }
 }
-
 
 /* Button styling */
 button {
@@ -203,7 +191,6 @@ button {
 button:hover {
   background-color: #45a0497a;
 }
-
 
 @media (max-width: 400px) {
 
